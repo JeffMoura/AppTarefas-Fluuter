@@ -22,6 +22,9 @@ class _HomeState extends State<Home> {
   final _toDoController = TextEditingController();
 //CRIA UMA LISTA VAZIA
   List _toDoList = [];
+//MAP PARA DESFAZER A REMOÇÃO DE ELEMENTO
+  Map<String, dynamic> _lastRemoved;
+  int _lastRemovedPos; //volta para posição que ele foi removido
 
 //LER OS DADOS QUANDO O APP ABRE
   @override //reescrever um método que é chamado sempre quando inicializa o estado da tela
@@ -102,17 +105,24 @@ class _HomeState extends State<Home> {
   }
 //================FUNÇÃO QUE EXIBE OS ITENS DA LISTA
 
-  Widget buildItem(context, index) {
-    return Dismissible(  //widget que permitirá o efeito para arrastar o item para deletar
-      key: Key(DateTime.now().millisecondsSinceEpoch.toString()), //permite identificar qual elemento da lista será deslizado, neste caso definido pelo tempo atual em milisegundos 
-      background: Container( //container para criar uma faixa de cor vermelha
+  Widget buildItem(BuildContext context, int index) {
+    //tipos dos parâmetros "BuildContext e int"
+    return Dismissible(
+      //widget que permitirá o efeito para arrastar o item para deletar
+      key: Key(DateTime.now()
+          .millisecondsSinceEpoch
+          .toString()), //permite identificar qual elemento da lista será deslizado, neste caso definido pelo tempo atual em milisegundos
+      background: Container(
+        //container para criar uma faixa de cor vermelha
         color: Colors.red,
-        child: Align(  //widget que vai ser responsável pelo alinhamento do ícone no canto esquerdo
+        child: Align(
+          //widget que vai ser responsável pelo alinhamento do ícone no canto esquerdo
           alignment: Alignment(-0.9, 0.0),
           child: Icon(Icons.delete, color: Colors.white),
         ),
       ),
-      direction: DismissDirection.startToEnd, //determina a direção da esquerda para direita quando arrastar a faixa
+      direction: DismissDirection
+          .startToEnd, //determina a direção da esquerda para direita quando arrastar a faixa
       // A partir deste ponto chama a função que vai exibir os itens na lista
       child: CheckboxListTile(
         title: Text(_toDoList[index]["title"]),
@@ -130,6 +140,33 @@ class _HomeState extends State<Home> {
           });
         },
       ),
+      //terá uma função sempre que arrastar o item para direita para remover. O parâmetro é a direção que arrastou
+      onDismissed: (direction) {
+        //atualizar a lista
+        setState(() {
+          _lastRemoved = Map.from(
+              _toDoList[index]); //duplica o item que está tentando remover
+          _lastRemovedPos = index; //salva a posição que removeu
+          _toDoList.removeAt(index); //Pega a TodoList e remove na posição index
+          _saveData(); //Já salva a lista com o elemento removido
+
+          final snack = SnackBar( //snackbar é utilizado mostrar uma informação ao usuário 
+            content: Text("Tarefa \"${_lastRemoved["title"]}\" removida!"), //conteúdo do snackbar
+            action: SnackBarAction( //define uma ação para a snackbar, neste caso, um botão para desfazer a ação de exclusão
+              label: "Desfazer", //título da ação
+              onPressed: () {
+                //atualizar estado na tela
+                setState(() {
+                  _toDoList.insert(_lastRemovedPos, _lastRemoved); //pega a lista e insere o elemento que removeu "_lasRemoved", na posição que já estava "_lastRemovePos"
+                  _saveData(); //salva toda a ação
+                });
+              },
+            ),
+            duration: Duration(seconds: 2), //duração da ação, ao qual a mensagem para desfazer exclusão irá aparecer
+          );
+          Scaffold.of(context).showSnackBar(snack); //mostra o snacbar construído acima na tela do app
+        });
+      },
     );
   }
 
