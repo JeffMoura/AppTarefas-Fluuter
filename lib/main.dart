@@ -114,7 +114,7 @@ class _HomeState extends State<Home> {
           .toString()), //permite identificar qual elemento da lista será deslizado, neste caso definido pelo tempo atual em milisegundos
       background: Container(
         //container para criar uma faixa de cor vermelha
-        color: Colors.red,
+        color: Colors.redAccent,
         child: Align(
           //widget que vai ser responsável pelo alinhamento do ícone no canto esquerdo
           alignment: Alignment(-0.9, 0.0),
