@@ -150,21 +150,28 @@ class _HomeState extends State<Home> {
           _toDoList.removeAt(index); //Pega a TodoList e remove na posição index
           _saveData(); //Já salva a lista com o elemento removido
 
-          final snack = SnackBar( //snackbar é utilizado mostrar uma informação ao usuário 
-            content: Text("Tarefa \"${_lastRemoved["title"]}\" removida!"), //conteúdo do snackbar
-            action: SnackBarAction( //define uma ação para a snackbar, neste caso, um botão para desfazer a ação de exclusão
+          final snack = SnackBar(
+            //snackbar é utilizado mostrar uma informação ao usuário
+            content: Text(
+                "Tarefa \"${_lastRemoved["title"]}\" removida!"), //conteúdo do snackbar
+            action: SnackBarAction(
+              //define uma ação para a snackbar, neste caso, um botão para desfazer a ação de exclusão
               label: "Desfazer", //título da ação
               onPressed: () {
                 //atualizar estado na tela
                 setState(() {
-                  _toDoList.insert(_lastRemovedPos, _lastRemoved); //pega a lista e insere o elemento que removeu "_lasRemoved", na posição que já estava "_lastRemovePos"
+                  _toDoList.insert(_lastRemovedPos,
+                      _lastRemoved); //pega a lista e insere o elemento que removeu "_lasRemoved", na posição que já estava "_lastRemovePos"
                   _saveData(); //salva toda a ação
                 });
               },
             ),
-            duration: Duration(seconds: 2), //duração da ação, ao qual a mensagem para desfazer exclusão irá aparecer
+            duration: Duration(
+                seconds:
+                    2), //duração da ação, ao qual a mensagem para desfazer exclusão irá aparecer
           );
-          Scaffold.of(context).showSnackBar(snack); //mostra o snacbar construído acima na tela do app
+          Scaffold.of(context).showSnackBar(
+              snack); //mostra o snacbar construído acima na tela do app
         });
       },
     );
