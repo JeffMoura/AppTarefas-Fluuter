@@ -89,11 +89,11 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
               icon: Icon(
-            Icons.favorite,
-            color: Colors.red,
+            Icons.content_paste,
+            color: Colors.blueGrey,
           )),
         ],
-        title: Text("Lista de Tarefas CRISTINA"),
+        title: Text("Lista de Tarefas"),
         backgroundColor: Colors.greenAccent,
         centerTitle: true,
       ),
@@ -194,8 +194,8 @@ class _HomeState extends State<Home> {
               onPressed: () {
                 //atualizar estado na tela
                 setState(() {
-                  _toDoList.insert(_lastRemovedPos,
-                      _lastRemoved); //pega a lista e insere o elemento que removeu "_lasRemoved", na posição que já estava "_lastRemovePos"
+                  //pega a lista e insere o elemento que removeu "_lasRemoved", na posição que já estava "_lastRemovePos"
+                  _toDoList.insert(_lastRemovedPos, _lastRemoved);
                   _saveData(); //salva toda a ação
                 });
               },
@@ -204,6 +204,7 @@ class _HomeState extends State<Home> {
                 seconds:
                     2), //duração da ação, ao qual a mensagem para desfazer exclusão irá aparecer
           );
+          Scaffold.of(context).removeCurrentSnackBar();
           Scaffold.of(context).showSnackBar(
               snack); //mostra o snacbar construído acima na tela do app
         });
