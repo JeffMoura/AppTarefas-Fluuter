@@ -1,6 +1,6 @@
 # app_listadetarefas
 
-A new Flutter application.
+Aplicação para listar tarefas, simples em flutter.
 
 ## Getting Started
 
