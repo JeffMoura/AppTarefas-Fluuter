@@ -57,13 +57,44 @@ class _HomeState extends State<Home> {
     });
   }
 
+  //FUNÇÃO PARA ATUALIZAR A TELA APÓS ORDENAMENTO DAS TAREFAS PRONTAS
+  Future<Null> _refresh() async {
+    //a função async vai fazer com que a atualização da tela no ordenamento das tarefas prontas ocorra lentamente
+    await Future.delayed(
+        Duration(seconds: 1)); //vai esperar 1 segundo dentro da função
+    //atualiza o estado da tela
+    setState(() {
+      //Função de comparação "sort"
+      _toDoList.sort((a, b) {
+        //argumentos da função anônima (Mapas "a,b") para ordenação da lista.
+        //IMPORTANTE: é preciso retornar 1 ou número positivo se a>b, retorna 0 se a=b, e retornar negativo se b>a.
+        //A ideia é ordenar a lista pelas tarefas não concluídas até as concluídas
+        if (a["ok"] && !b["ok"])
+          return 1; //se "a" tiver concluído e "b" não tiver concluído ele retorna positivo
+        else if (!a["ok"] && b["ok"])
+          return -1; //se "a" não tiver concluído e "b" tiver concluído ele retorna negativo
+        else
+          return 0; //se ambos são iguais, retorna 0
+      });
+      _saveData(); //salvar o ordenamento
+    });
+    return null; //não precisa retornar nada (null)
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       //CABEÇALHO DO APP
       appBar: AppBar(
-        title: Text("Lista de Tarefas"),
-        backgroundColor: Colors.green[300],
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(
+            Icons.favorite,
+            color: Colors.red,
+          )),
+        ],
+        title: Text("Lista de Tarefas CRISTINA"),
+        backgroundColor: Colors.greenAccent,
         centerTitle: true,
       ),
       //CORPO DO APP
@@ -84,7 +115,7 @@ class _HomeState extends State<Home> {
                 ),
                 //BOTÃO PARA ADICIONAR NOVAS TAREFAS
                 RaisedButton(
-                    color: Colors.blueGrey,
+                    color: Colors.redAccent,
                     child: Text("Adicionar"),
                     textColor: Colors.white,
                     onPressed: _addToDo)
@@ -93,11 +124,14 @@ class _HomeState extends State<Home> {
           ),
           Expanded(
             //LISTVIEW QUE IRÁ EXIBIR AS TAREFAS
-            child: ListView.builder(
-                padding: EdgeInsets.only(top: 10.0),
-                itemCount: _toDoList.length,
-                itemBuilder:
-                    buildItem), //Chama a função buildItem com a lista checkboxlist
+            child: RefreshIndicator(
+              onRefresh:
+                  _refresh, //irá atualizar e ordenar a lista das tarefas já concluídas
+              child: ListView.builder(
+                  padding: EdgeInsets.only(top: 10.0),
+                  itemCount: _toDoList.length,
+                  itemBuilder: buildItem),
+            ), //Chama a função buildItem com a lista checkboxlist
           )
         ],
       ),
